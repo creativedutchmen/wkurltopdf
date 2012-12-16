@@ -1,50 +1,74 @@
 <?php
 
-use wkurltopdf\queue;
-
-require_once(EXTENSIONS . '/wkurltopdf/lib/queue.php');
-require_once(EXTENSIONS . '/wkurltopdf/lib/queued_element.php');
-
-class Extension_Wkurltopdf extends Extension
+Class Extension_WKUrlToPdf extends Extension
 {
-	public function install()
-	{
-		Symphony::Database()->query("
-				CREATE TABLE IF NOT EXISTS `tbl_fields_pdf_url` (
-					`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-					`field_id` INT(11) UNSIGNED NOT NULL,
-					`anchor_label` VARCHAR(255) DEFAULT NULL,
-					`url_field` INT(11) UNSIGNED NOT NULL,
-					`new_window` ENUM('yes', 'no') DEFAULT 'no',
-					`hide` ENUM('yes', 'no') DEFAULT 'no',
-					PRIMARY KEY (`id`),
-					KEY `field_id` (`field_id`)
-				)
-			");
-		return Symphony::Database()->query(
-			sprintf(
-				"CREATE TABLE IF NOT EXISTS `%s` (
-					`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-					`entry_id` INT(11) UNSIGNED NOT NULL,
-					`field_id` INT(11) UNSIGNED NULL,
-					`status` VARCHAR(255) DEFAULT NULL,
-					`modified` datetime NOT NULL,
-					PRIMARY KEY (`id`)
-				)",
-				Queue::QUEUE_TABLE_NAME
+	public function getSubscribedDelegates(){
+		return array(
+			array(
+				'page' => '/blueprints/pages/',
+				'delegate' => 'AppendPageContent',
+				'callback' => 'appendType'
+			),
+			array(
+				'page' => '/frontend/',
+				'delegate' => 'FrontendPageResolved',
+				'callback' => 'processRequest'
 			)
 		);
 	}
-
-	public function uninstall()
+	
+	/**
+	 * Append type for maintenance pages to page editor.
+	 *
+	 * @param array $context
+	 *  delegate context
+	 */
+	public function appendType($context)
 	{
-		Symphony::Database()->query("DROP TABLE IF EXISTS `tbl_fields_pdf_url`");
-		return Symphony::Database()->query(
-			sprintf(
-				"DROP TABLE IF EXISTS `%s`",
-				Queue::QUEUE_TABLE_NAME
-			)
-		);
+
+		// Find page types
+		$elements = $context['form']->getChildren();
+		$fieldset = $elements[0]->getChildren();
+		$group = $fieldset[2]->getChildren();
+		$div = $group[1]->getChildren();
+		$types = $div[2]->getChildren();
+
+		// Search for existing maintenance type
+		$flag = false;
+		foreach($types as $type) {
+			if($type->getValue() == 'pdf') {
+				$flag = true;
+			}
+		}
+
+		// Append maintenance type
+		if($flag == false) {
+			$mode = new XMLElement('li', 'pdf');
+			$div[2]->appendChild($mode);
+		}
+	}
+	
+	public function processRequest($context)
+	{
+		if(in_array('pdf',$context['page_data']['type']) && substr($_REQUEST['symphony-page'], -4) == '.pdf') {
+			$this->generatePdf(substr($_REQUEST['symphony-page'], 0, -4));
+		}
 	}
 
+	public function generatePdf($url)
+	{
+		try{
+			$tmp_name = uniqid();
+			shell_exec('bin/wkhtmltopdf-amd64 ' . escapeshellarg(URL . '/' . $url) . ' tmp/' . $tmp_name);
+			if(file_exists('tmp/' . $tmp_name)){
+				header('Content-type: application/pdf');
+				echo file_get_contents('tmp/' . $tmp_name);
+				exit;
+			}
+			die();
+		}
+		catch(Exception $e){
+			die($e);
+		}
+	}
 }
