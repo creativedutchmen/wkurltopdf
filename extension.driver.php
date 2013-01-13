@@ -79,8 +79,7 @@ Class Extension_WKUrlToPdf extends Extension
 	        }
 			if(file_exists($path . '/tmp/' . $tmp_name)){
 				header('Content-type: application/pdf');
-				header("Cache-Control: maxage=600"); //In seconds
-				header("Pragma: public");
+				header("Cache-Control: max-age=6000, public"); //In seconds
 				echo file_get_contents($path  . '/tmp/' . $tmp_name);
 				die();
 			}
