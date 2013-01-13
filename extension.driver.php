@@ -63,7 +63,26 @@ Class Extension_WKUrlToPdf extends Extension
 			$path = dirname(__FILE__);
 			$tmp_name = uniqid();
 			$command = 'su www -c "' . $path .'/bin/wkhtmltopdf-amd64 --print-media-type --page-size A4 --disable-internal-links --disable-smart-shrinking ' . escapeshellarg(URL . '/' . $url) . ' ' . $path . '/tmp/' . $tmp_name . '"';
-			echo $command;
+			
+			// we use proc_open with pipes to fetch error output
+	        $descriptors = array(
+	            2   => array('pipe','w'),
+	        );
+	        $process = proc_open($command, $descriptors, $pipes, null, null, array('bypass_shell'=>true));
+
+	        if(is_resource($process)) {
+
+	            $stderr = stream_get_contents($pipes[2]);
+	            fclose($pipes[2]);
+
+	            $result = proc_close($process);
+
+	            if($result!==0){
+	                echo $stderr;
+	            }
+	        }
+
+			//echo $command;
 			echo shell_exec($command);
 			if(file_exists('tmp/' . $tmp_name)){
 				header('Content-type: application/pdf');
