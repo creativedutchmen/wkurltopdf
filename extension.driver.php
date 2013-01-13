@@ -1,5 +1,7 @@
 <?php
 
+require_once("lib/phpwkhtmltopdf/WkHtmlToPdf.php");
+
 Class Extension_WKUrlToPdf extends Extension
 {
 	public function getSubscribedDelegates(){
@@ -58,17 +60,21 @@ Class Extension_WKUrlToPdf extends Extension
 	public function generatePdf($url)
 	{
 		try{
-			$tmp_name = uniqid();
-			shell_exec('bin/wkhtmltopdf-amd64 ' . escapeshellarg(URL . '/' . $url) . ' tmp/' . $tmp_name);
-			if(file_exists('tmp/' . $tmp_name)){
-				header('Content-type: application/pdf');
-				echo file_get_contents('tmp/' . $tmp_name);
-				exit;
-			}
+			$pdf = new WkHtmlToPdf();
+			$pdf->addPage(URL . '/' . $url);
+			$pdf->setPageOptions(array(
+				'print-media-styles',
+			    'disable-smart-shrinking',
+			));
+			//$pdf->addToc();
+			$pdf->send('b.pdf');
 			die();
+			//var_dump($pdf);
+			//echo 'b';
+			//die();
 		}
 		catch(Exception $e){
-			die($e);
+			echo $e;
 		}
 	}
 }
