@@ -60,22 +60,14 @@ Class Extension_WKUrlToPdf extends Extension
 	public function generatePdf($url)
 	{
 		try{
-			//chmod(dirname(__FILE__) . '/bin/wkhtmltopdf-0.9.9-OS-X', 777);
-			//chmod(dirname(__FILE__) . '/bin/wkhtmltopdf-amd64', 777);
-			$pdf = new WkHtmlToPdf();
-			$pdf->addPage(URL . '/' . $url);
-			$pdf->setPageOptions(array(
-				'print-media-styles',
-			    'disable-smart-shrinking',
-			));
-			//$pdf->addToc();
-			if(!$pdf->send('b.pdf')){
-				die($pdf->getError());
+			$tmp_name = uniqid();
+			shell_exec('bin/wkhtmltopdf-amd64 --print-media-type --page-size A4 --disable-internal-links --disable-smart-shrinking ' . escapeshellarg(URL . '/' . $url) . ' tmp/' . $tmp_name);
+			if(file_exists('tmp/' . $tmp_name)){
+				header('Content-type: application/pdf');
+				echo file_get_contents('tmp/' . $tmp_name);
+				exit;
 			}
-			die();
-			//var_dump($pdf);
-			//echo 'b';
-			//die();
+			die(__('Oops! There was an error generating the pdf...');
 		}
 		catch(Exception $e){
 			echo $e;
