@@ -308,7 +308,7 @@ class WkHtmlToPdf
             $result = proc_close($process);
 
             if($result!==0)
-                $this->error = "Could not run command $command:\n$stderr";
+                //$this->error = "Could not run command $command:\n$stderr";
         } else
             $this->error = "Could not run command $command";
 
