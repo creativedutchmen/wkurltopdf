@@ -61,7 +61,7 @@ Class Extension_WKUrlToPdf extends Extension
 	{
 		try{
 			$tmp_name = uniqid();
-			$command = 'sudo -su www bin/wkhtmltopdf-amd64 --print-media-type --page-size A4 --disable-internal-links --disable-smart-shrinking ' . escapeshellarg(URL . '/' . $url) . ' tmp/' . $tmp_name;
+			$command = 'sudo -su www -c bin/wkhtmltopdf-amd64 --print-media-type --page-size A4 --disable-internal-links --disable-smart-shrinking ' . escapeshellarg(URL . '/' . $url) . ' tmp/' . $tmp_name;
 			echo $command;
 			shell_exec($command);
 			if(file_exists('tmp/' . $tmp_name)){
