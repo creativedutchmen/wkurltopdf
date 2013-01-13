@@ -110,7 +110,7 @@ class WkHtmlToPdf
      */
     public function __construct($options=array())
     {
-        $this->bin = dirname(__FILE__) . '/../../bin/wkhtmltopdf-0.9.9-OS-X';
+        $this->bin = dirname(__FILE__) . '/../../bin/wkhtmltopdf-amd64';
         if($options!==array())
             $this->setOptions($options);
     }
