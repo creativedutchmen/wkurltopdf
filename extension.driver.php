@@ -60,6 +60,8 @@ Class Extension_WKUrlToPdf extends Extension
 	public function generatePdf($url)
 	{
 		try{
+			chmod(dirname(__FILE__) . '/bin/wkhtmltopdf-0.9.9-OS-X', 770);
+			chmod(dirname(__FILE__) . '/bin/wkhtmltopdf-amd64', 770);
 			$pdf = new WkHtmlToPdf();
 			$pdf->addPage(URL . '/' . $url);
 			$pdf->setPageOptions(array(
