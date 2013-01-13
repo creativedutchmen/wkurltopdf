@@ -67,7 +67,7 @@ Class Extension_WKUrlToPdf extends Extension
 				echo file_get_contents('tmp/' . $tmp_name);
 				exit;
 			}
-			die(__('Oops! There was an error generating the pdf...');
+			die(__('Oops! There was an error generating the pdf...'));
 		}
 		catch(Exception $e){
 			echo $e;
