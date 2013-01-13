@@ -60,8 +60,9 @@ Class Extension_WKUrlToPdf extends Extension
 	public function generatePdf($url)
 	{
 		try{
+			$path = dirname(__FILE__);
 			$tmp_name = uniqid();
-			$command = 'su www -c "bin/wkhtmltopdf-amd64 --print-media-type --page-size A4 --disable-internal-links --disable-smart-shrinking ' . escapeshellarg(URL . '/' . $url) . ' tmp/' . $tmp_name . '"';
+			$command = 'su www -c "' . $dirname .'/bin/wkhtmltopdf-amd64 --print-media-type --page-size A4 --disable-internal-links --disable-smart-shrinking ' . escapeshellarg(URL . '/' . $url) . ' ' . $dirname . '/tmp/' . $tmp_name . '"';
 			echo $command;
 			echo shell_exec($command);
 			if(file_exists('tmp/' . $tmp_name)){
