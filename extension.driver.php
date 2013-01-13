@@ -77,7 +77,7 @@ Class Extension_WKUrlToPdf extends Extension
 
 	            $result = proc_close($process);
 	        }
-			if(file_exists('tmp/' . $tmp_name)){
+			if(file_exists($path . '/tmp/' . $tmp_name)){
 				header('Content-type: application/pdf');
 				echo file_get_contents('tmp/' . $tmp_name);
 				exit;
