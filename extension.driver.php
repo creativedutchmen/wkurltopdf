@@ -80,9 +80,11 @@ Class Extension_WKUrlToPdf extends Extension
 			if(file_exists($path . '/tmp/' . $tmp_name)){
 				header('Content-type: application/pdf');
 				echo file_get_contents('tmp/' . $tmp_name);
-				exit;
+				die();
 			}
-			die(__('Oops! There was an error generating the pdf...'));
+			else{
+				die(__('Oops! There was an error generating the pdf...'));
+			}
 		}
 		catch(Exception $e){
 			echo $e;
