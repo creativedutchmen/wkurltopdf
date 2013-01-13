@@ -67,7 +67,9 @@ Class Extension_WKUrlToPdf extends Extension
 			    'disable-smart-shrinking',
 			));
 			//$pdf->addToc();
-			$pdf->send('b.pdf');
+			if(!$pdf->send('b.pdf')){
+				die($pdf->getError());
+			}
 			die();
 			//var_dump($pdf);
 			//echo 'b';
