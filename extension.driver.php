@@ -62,7 +62,7 @@ Class Extension_WKUrlToPdf extends Extension
 		try{
 			$path = dirname(__FILE__);
 			$tmp_name = uniqid();
-			$command = $path .'/bin/wkhtmltopdf-amd64 --print-media-type --page-size A4 --disable-internal-links --disable-smart-shrinking ' . escapeshellarg(URL . '/' . $url) . ' ' . $path . '/tmp/' . $tmp_name;
+			$command = $path .'/bin/wkhtmltopdf-amd64 --print-media-type --page-size A4 --disable-javascript --disable-internal-links --disable-smart-shrinking ' . escapeshellarg(URL . '/' . $url) . ' ' . $path . '/tmp/' . $tmp_name;
 			
 			// we use proc_open with pipes to fetch error output
 	        $descriptors = array(
